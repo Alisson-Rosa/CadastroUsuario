@@ -8,5 +8,6 @@ public enum TipoEntrada {
     EMAIL,
     DATA_NASCIMENTO,
     CIDADE,
+    FOTO;
 
 }

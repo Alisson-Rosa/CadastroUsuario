@@ -4,5 +4,6 @@ public class MainApp {
 
         InterfaceUsuario interfaceUsuario = new InterfaceUsuario();
         interfaceUsuario.menuPrincipal();
+        System.out.println("\nPrograma Finalizado!");
     }
 }

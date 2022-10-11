@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -218,22 +219,33 @@ public class InterfaceUsuario {
         String campoUF = "Informe a uf do novo usuario: ";
         String uf = entradaDeDados(campoUF, sc, TipoEntrada.UF);
 
+        String campoFOTO = "Selecione a foto do novo usuario: ";
+        String caminhoFoto = entradaDeDados(campoFOTO, sc, TipoEntrada.FOTO);
+
         LocalDate dataNascimento = LocalDate.parse(dataNascimentoStr, UsuarioService.formatter);
 
-        return new Usuario(nome, cpf, rg, dataNascimento, telefoneContato, email, cidade, uf, "");
+        return new Usuario(nome, cpf, rg, dataNascimento, telefoneContato, email, cidade, uf, caminhoFoto);
     }
 
     private String entradaDeDados(String texto, Scanner sc, TipoEntrada tipoEntrada){
         String valor = "";
+        int resultFc = JFileChooser.CANCEL_OPTION;
         do {
             System.out.println(texto);
-            valor = sc.nextLine();
-        } while (!validarValor(valor, tipoEntrada));
+            if(TipoEntrada.FOTO.equals(tipoEntrada)){
+                JFileChooser fc = new JFileChooser();
+                fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                resultFc = fc.showDialog(new JDialog(), null);
+                valor = fc.getSelectedFile().getAbsolutePath();
+            }else {
+                valor = sc.nextLine();
+            }
+        } while (!validarValor(valor, tipoEntrada, resultFc));
 
         return valor;
     }
 
-    private boolean validarValor(String valor, TipoEntrada tipoEntrada){
+    private boolean validarValor(String valor, TipoEntrada tipoEntrada, int resultFc){
         if(TipoEntrada.PADRAO.equals(tipoEntrada)){
             return UsuarioService.isValidadorPadrao(valor);
         }
@@ -257,6 +269,15 @@ public class InterfaceUsuario {
         }
         if(TipoEntrada.NOME.equals(tipoEntrada)){
             return UsuarioService.isValidadorNomeComleto(valor);
+        }
+        if(TipoEntrada.FOTO.equals(tipoEntrada)){
+            if(resultFc == JFileChooser.FILES_ONLY){
+                System.out.println("Foto carregada com sucesso.");
+                return true;
+            } else {
+                System.out.println("Foto nao carregada. Selecione novamente.");
+                return false;
+            }
         }
 
         return true;
